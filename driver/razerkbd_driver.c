@@ -74,6 +74,21 @@ static const struct razer_key_translation chroma_keys[] = {
     { }
 };
 
+static const struct razer_key_translation chroma_keys_2[] = {
+    { KEY_F1,    KEY_MUTE },
+    { KEY_F2,    KEY_VOLUMEDOWN },
+    { KEY_F3,    KEY_VOLUMEUP },
+
+    { KEY_F5,    KEY_PLAYPAUSE },
+    { KEY_F6,    KEY_STOPCD },
+    { KEY_F7,    KEY_PREVIOUSSONG },
+    { KEY_F8,    KEY_NEXTSONG },
+    { KEY_RIGHTALT,    RAZER_MACRO_KEY },
+
+    { KEY_PAUSE, KEY_SLEEP },
+    { }
+};
+
 /**
  * Essentially search through the struct array above.
  */
@@ -1546,9 +1561,12 @@ static int razer_event(struct hid_device *hdev, struct hid_field *field, struct 
         return 1;
     }
 
-
-
-    translation = find_translation(chroma_keys, usage->code);
+    switch(usb_dev->descriptor.idProduct) {
+    case USB_DEVICE_ID_RAZER_BLACKWIDOW_ORIGINAL_ALT:
+        translation = find_translation(chroma_keys_2, usage->code);
+    default:
+        translation = find_translation(chroma_keys, usage->code);
+    }
 
     if(translation) {
         if(test_bit(usage->code, asc->pressed_fn)) {
